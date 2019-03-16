@@ -24,6 +24,7 @@ class Command(Enum):
     ENDOFPHASE = 14
     RESEARCH = 15
     EXPLOREHUT = 16
+    HARVESTRESOURCE = 17
     
 
 SETCAPITAL = "SETCAPITAL"
@@ -42,6 +43,7 @@ ENDOFMOVE = "ENDOFMOVE"
 ENDOFPHASE = "ENDOFPHASE"
 RESEARCH = "RESEARCH"
 EXPLOREHUT = "EXPLOREHUT"
+HARVESTRESOURCE = "HARVESTRESOURCE"
 
 
 def toCommand(s):
@@ -60,7 +62,8 @@ def toCommand(s):
     if s == ENDOFMOVE : return Command.ENDOFMOVE
     if s == ENDOFPHASE : return Command.ENDOFPHASE
     if s == RESEARCH : return Command.RESEARCH
-    if s == EXPLOREHUT : return Command.EXPLOREHUT 
+    if s == EXPLOREHUT : return Command.EXPLOREHUT
+    if s == HARVESTRESOURCE : return Command.HARVESTRESOURCE
     return None
 
 
@@ -81,6 +84,7 @@ def toS(c):
     if c == Command.ENDOFPHASE : return ENDOFPHASE
     if c == Command.RESEARCH : return RESEARCH
     if c == Command.EXPLOREHUT : return EXPLOREHUT
+    if c == Command.HARVESTRESOURCE : return HARVESTRESOURCE
     return None
 
 

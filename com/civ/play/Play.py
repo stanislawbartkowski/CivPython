@@ -92,7 +92,10 @@ def endOfPhase(P):
 def researchTechnology(P):
     tech = misc.getRandom(P.i)
     P.executeCommandJ(tech)
-         
+
+def harvestResource(P):
+    pair = misc.getRandom(P.i)
+    P.executeCommandPP(pair["p"],pair["param"])       
 
 class Play:
 
@@ -164,6 +167,9 @@ class Play:
             return True
         if self.co == CO.Command.RESEARCH :
             researchTechnology(self)
+            return True
+        if self.co == CO.Command.HARVESTRESOURCE :
+            harvestResource(self)
             return True
         return False
         
