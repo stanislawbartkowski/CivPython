@@ -83,6 +83,9 @@ def revealTile(P) :
     P.executeCommandPP(r["p"], r["orientation"])
 
     
+def _getMap(P):
+    return P.b["board"]["map"]    
+    
 def endOfPhase(P):
     P.co = CO.Command.ENDOFPHASE
     phase = P.b["board"]["game"]["phase"]
@@ -95,8 +98,22 @@ def researchTechnology(P):
 
 def harvestResource(P):
     pair = misc.getRandom(P.i)
-    P.executeCommandPP(pair["p"],pair["param"])       
+    P.executeCommandPP(pair["p"],pair["param"])
+    
+def getSquare(P,row,col):
+    map = _getMap(P)
+    s = map[row][col]
+    return s
 
+def sendProduction(P) :
+    f = misc.getRandom(P.i)
+    P.executeCommandPP(f['p'],f['param'])
+    
+def buyBuilding(P,selfun,selfun1):
+    city = misc.getRandom(P.i,selfun)
+    building = misc.getRandom(city["list"],selfun1)
+    P.executeCommandPP(city['p'],{ "p" : building["p"],"building" : building["building"]})
+ 
 class Play:
 
     def __init__(self, token):
@@ -137,7 +154,7 @@ class Play:
         comm = self.getCommands()
         return misc.getRandom(comm)
     
-    def playSingleCommand(self, co, selfun=None):
+    def playSingleCommand(self, co, selfun=None,selfun1=None):
         self.co = co
         if co == CO.Command.ENDOFMOVE : self.i = []
         else : self.i = C.itemizeCommand(self.token, CO.toS(self.co))
@@ -170,6 +187,12 @@ class Play:
             return True
         if self.co == CO.Command.HARVESTRESOURCE :
             harvestResource(self)
+            return True
+        if self.co == CO.Command.SENDPRODUCTION :
+            sendProduction(self)
+            return True
+        if self.co == CO.Command.BUYBUILDING :
+            buyBuilding(self,selfun,selfun1)
             return True
         return False
         
@@ -208,6 +231,12 @@ class TestGame :
     def play(self, P):
         P.readBoard()
         while P.playCommand() : P.readBoard()
+
+    def playN(self, P,no):
+        P.readBoard()
+        for i in range(no) :                
+            if not P.playCommand(): break 
+            P.readBoard()
         
     def deleteGame(self):
         if self.tokena : C.unregisterG(self.tokena)

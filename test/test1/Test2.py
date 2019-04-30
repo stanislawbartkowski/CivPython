@@ -25,10 +25,6 @@ class Test2(unittest.TestCase):
         return (G, PA)
 
     def __runUnit(self, co, name):
-#        G = TestHelper.DeployTestGame("test1", "game-1.json", "America")
-#        PA = G.playA()
-#        PA.playSingleCommand(co)
-#        PA.readBoard()
         (G, PA) = self.__playc(co)
         TestHelper.verifyNumOfUnits(self, PA.b, name, 2)
         G.deleteGame()

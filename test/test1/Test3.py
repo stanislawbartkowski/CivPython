@@ -19,7 +19,7 @@ class Test(unittest.TestCase):
         C.registerAutom()
         
     def _run(self):
-        G = TestHelper.DeployTestGame("test1", "game-42.json", "America")
+        G = TestHelper.DeployTestGame("test1", "game-32.json", "America")
         PA = G.playA()
 #        PA.playSingleCommand(CO.Command.STARTMOVE, lambda x : (x['p']['row'] == 2 and x['p']['col'] == 2))
         PA.playSingleCommand(CO.Command.STARTMOVE, lambda x : misc.eqP({"row" : 2, "col" : 2}, x['p']))

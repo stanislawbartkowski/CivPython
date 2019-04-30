@@ -22,10 +22,10 @@ class Test(unittest.TestCase):
         G = TestGame()
         G.registerSingleGame("China")
         P = G.playA()
-        G.play(P)
+        G.playN(P,5)
         G.deleteGame()
 
-    @unittest.skip("demonstrating skipping")        
+#    @unittest.skip("demonstrating skipping")        
     def test2(self):
         print("Simple test for two player game")
         G = TestGame()
@@ -36,7 +36,7 @@ class Test(unittest.TestCase):
         G.play(PB)
         G.deleteGame()
         
-    @unittest.skip("demonstrating skipping")        
+#    @unittest.skip("demonstrating skipping")        
     def test3(self):
         print("Deploy game and delete game")
         G = TestHelper.DeployTestGame("test1", "game-1.json", "America")
