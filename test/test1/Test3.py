@@ -40,7 +40,7 @@ class Test(unittest.TestCase):
         # endofphase
         PA.playSingleCommand(CO.Command.ENDOFPHASE)
 
-    @unittest.skip("demonstrating skipping")
+#    @unittest.skip("demonstrating skipping")
     def test1(self):
         (G, PA) = self._run()
         PA.playSingleCommand(CO.Command.ENDOFMOVE)
@@ -52,7 +52,7 @@ class Test(unittest.TestCase):
         self.assertTrue(CO.Command.STARTMOVE in comm)
         G.deleteGame()
 
-    @unittest.skip("demonstrating skipping")
+#    @unittest.skip("demonstrating skipping")
     def test2(self):
         (G, PA) = self._run()
         # should issue automatically ENDOFMOVE
@@ -65,7 +65,7 @@ class Test(unittest.TestCase):
         self.assertTrue(CO.Command.STARTMOVE in comm)
         G.deleteGame()
         
-    @unittest.skip("demonstrating skipping")
+#    @unittest.skip("demonstrating skipping")
     def test3(self):
         (G, PA) = self._run()
         # wait until endofphase
@@ -77,7 +77,7 @@ class Test(unittest.TestCase):
         self.assertTrue(CO.Command.RESEARCH in comm)
         G.deleteGame()
         
-    @unittest.skip("demonstrating skipping")
+#    @unittest.skip("demonstrating skipping")
     def test4(self):
         (G, PA) = self._run()
         # wait until endofphase
@@ -91,7 +91,7 @@ class Test(unittest.TestCase):
         G.deleteGame()
         
     def test5(self):
-        G = TestHelper.DeployTestGame("test1", "game-45.json", "America")
+        G = TestHelper.DeployTestGame("test1", "game-35.json", "America")
         PA = G.playA()
         PA.readBoard()
         comm = PA.getCommands()

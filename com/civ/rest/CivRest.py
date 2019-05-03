@@ -6,8 +6,8 @@ Created on 31 sty 2019
 import requests
 import json
 
-# SERVERHOST="localhost"
-# APPNAME="CIvilizationUI"
+#SERVERHOST="localhost"
+#APPNAME="CIvilizationUI"
 
 SERVERHOST = "think"
 APPNAME = "civilization"
@@ -116,8 +116,8 @@ def executeCommand(token, action, row, col, jsparam=None):
     url = __getRestURL() + "/command?token=" + token + "&action=" + action + "&row=" + str(row) + "&col=" + str(col)
     if jsparam != None: url = url + "&jsparam=" + jsparam
     r = requests.post(url)
-    return __getText(r)
-
+    res = __getText(r)
+    if res != None and res != "" : raise(CivError(action, res))
 
 def __postJson(rest, js, civ):
     url = __getRestURL() + "/" + rest + "?civ=" + civ

@@ -6,14 +6,88 @@ Created on 1 lut 2019
 
 from com.civ.rest import CivRest as C
 from com.civ.commands import Commands as CO
+from com.civ.commands import Resources as RE
 import random
 from com.civ.play import misc
 import json
 
 random.seed()
 
+# ---------------------------
+# board related methods
+# ---------------------------
 
-def buildCity(P) :
+def _getB(P):
+    return P.b["board"]
+
+def _getYou(P):
+    return _getB(P)['you']
+    
+def _getMap(P):
+    return _getB(P)["map"]        
+
+def getSquare(P,row,col):
+    map = _getMap(P)
+    s = map[row][col]
+    return s
+
+def getResources(P):
+    return _getB(P)["resources"]
+
+def getPlayerCards(P):
+    return _getYou(P)["cultureresource"]["cards"]
+
+def _getPlayerResources(P):
+    return _getYou(P)["resources"]
+
+def _getRN(rr,r) :
+    s = RE.toS(r)
+    for r in rr :
+        if r["resource"] == s : return r["num"]
+    raise Exception('Resource does not exist in the board ot player resource list', r)
+
+''' Get number of a particular resource on the player panel
+    Parameters:
+      P : player panel
+      r : resource name (enumeration)
+    Returns: number of resources
+'''
+def getPlayerResourceN(P,r):
+    rr =  _getPlayerResources(P)
+    return _getRN(rr,r)
+
+''' Get number of a particular resource on board
+    Parameters:
+      P : player panel
+      r : resource name (enumeration)
+    Returns: number of resources
+'''
+def getResourceN(P,r):
+    rr =  getResources(P)
+    return _getRN(rr,r)
+
+def cultureProgress(P):
+    y = _getYou(P)['cultureprogress']
+    return y
+
+def getPlayerTrade(P):
+    t = _getYou(P)['trade']
+    return t
+
+# -------------------------
+# supporting methods
+# -------------------------
+
+def onList(p, l):
+    for i in l :
+        if misc.eqP(i, p) : return True
+    return False    
+
+# ----------------------
+# commands
+# ----------------------
+
+def _buildCity(P) :
     # print(P.i)
     # choose random
     pos = misc.getRandom(P.i)
@@ -22,7 +96,7 @@ def buildCity(P) :
     P.executeCommandP(pos)
 
     
-def deployFigure(P): 
+def _deployFigure(P): 
     print(P.i)
     # choose random city and point
     city = misc.getRandom(P.i)
@@ -32,7 +106,7 @@ def deployFigure(P):
     P.executeCommandPP(c, point)
 
     
-def buyUnit(P):
+def _buyUnit(P):
     print(P.i)    
     # choose random city
     city = misc.getRandom(P.i)
@@ -40,24 +114,18 @@ def buyUnit(P):
     P.executeCommandP(c)
 
     
-def startMove(P, selfun):
+def _startMove(P, selfun):
     P.visited = None
     f = misc.getRandom(P.i, selfun)
     P.executeCommandPP(f['p'], f['f'])
 
-    
-def onList(p, l):
-    for i in l :
-        if misc.eqP(i, p) : return True
-    return False    
 
-
-def endOfMove(P):
+def _endOfMove(P):
     P.co = CO.Command.ENDOFMOVE
     P.executeCommand()    
 
     
-def move(P, selfun):
+def _move(P, selfun):
     if P.visited == None : P.visited = []
     
     moved = []
@@ -68,7 +136,7 @@ def move(P, selfun):
             moved.append(i)
     
     if len(moved) == 0 :
-        endOfMove(P)
+        _endOfMove(P)
         return
     
     m = misc.getRandom(moved, selfun)
@@ -76,19 +144,16 @@ def move(P, selfun):
     P.executeCommandP(m)
 
     
-def revealTile(P) :
+def _revealTile(P) :
     l = P.i["tiles"]
     # can be more then 1 tile to reveal
     r = misc.getRandom(l)    
     P.executeCommandPP(r["p"], r["orientation"])
 
     
-def _getMap(P):
-    return P.b["board"]["map"]    
-    
 def endOfPhase(P):
     P.co = CO.Command.ENDOFPHASE
-    phase = P.b["board"]["game"]["phase"]
+    phase = _getB(P)["game"]["phase"]
     P.executeCommandJ(phase)
 
     
@@ -96,23 +161,33 @@ def researchTechnology(P):
     tech = misc.getRandom(P.i)
     P.executeCommandJ(tech)
 
-def harvestResource(P):
+def _harvestResource(P):
     pair = misc.getRandom(P.i)
     P.executeCommandPP(pair["p"],pair["param"])
     
-def getSquare(P,row,col):
-    map = _getMap(P)
-    s = map[row][col]
-    return s
-
-def sendProduction(P) :
+def _sendProduction(P) :
     f = misc.getRandom(P.i)
     P.executeCommandPP(f['p'],f['param'])
     
-def buyBuilding(P,selfun,selfun1):
+def _buyBuilding(P,key,selfun,selfun1):
     city = misc.getRandom(P.i,selfun)
     building = misc.getRandom(city["list"],selfun1)
-    P.executeCommandPP(city['p'],{ "p" : building["p"],"building" : building["building"]})
+    P.executeCommandPP(city['p'],{ "p" : building["p"],key : building[key]})
+    
+def _devottoCluster(P) :
+    city = misc.getRandom(P.i)
+    P.executeCommandPP(city['p'],city['list'])
+    
+def _advanceCulture(P):
+    P.executeCommand()    
+    
+def _spendTrade(P,selfun,param):
+    city = misc.getRandom(P.i,selfun)
+    P.executeCommandPP(city['p'],param)
+    
+def _discardCard(P):
+    card = misc.getRandom(P.i)
+    P.executeCommandJ(card)        
  
 class Play:
 
@@ -136,13 +211,13 @@ class Play:
         self.b = C.getBoard(self.token)
         
     def getCommands(self):
-        commands = self.b['board']['you']['commands']
+        commands = _getYou(self)['commands']
         # remove not supported yet
         comm = []
         endof = None
         for c in commands :
+            if not CO.isCommand(c['command']) : continue
             co = CO.toCommand(c['command'])
-            if co == None : continue
             if co == CO.Command.ENDOFMOVE or co == CO.Command.ENDOFPHASE :
                 endof = co 
                 continue
@@ -154,30 +229,30 @@ class Play:
         comm = self.getCommands()
         return misc.getRandom(comm)
     
-    def playSingleCommand(self, co, selfun=None,selfun1=None):
+    def playSingleCommand(self, co, selfun=None,selfun1=None,param=None):
         self.co = co
         if co == CO.Command.ENDOFMOVE : self.i = []
         else : self.i = C.itemizeCommand(self.token, CO.toS(self.co))
         if self.co == CO.Command.SETCAPITAL : 
-            buildCity(self)
+            _buildCity(self)
             return True
         if self.co == CO.Command.SETSCOUT or self.co == CO.Command.SETARMY or self.co == CO.Command.BUYSCOUT or self.co == CO.Command.BUYARMY :
-            deployFigure(self)
+            _deployFigure(self)
             return True
         if self.co == CO.Command.BUYAIRCRAFT or self.co == CO.Command.BUYARTILLERY or self.co == CO.Command.BUYINFANTRY or self.co == CO.Command.BUYMOUNTED :
-            buyUnit(self)
+            _buyUnit(self)
             return True
         if self.co == CO.Command.STARTMOVE :
-            startMove(self, selfun)
+            _startMove(self, selfun)
             return True
         if self.co == CO.Command.MOVE or self.co == CO.Command.EXPLOREHUT:
-            move(self, selfun)
+            _move(self, selfun)
             return True
         if self.co == CO.Command.ENDOFMOVE:
-            endOfMove(self)
+            _endOfMove(self)
             return True
         if self.co == CO.Command.REVEALTILE :
-            revealTile(self)
+            _revealTile(self)
             return True
         if self.co == CO.Command.ENDOFPHASE :
             endOfPhase(self)
@@ -186,13 +261,28 @@ class Play:
             researchTechnology(self)
             return True
         if self.co == CO.Command.HARVESTRESOURCE :
-            harvestResource(self)
+            _harvestResource(self)
             return True
         if self.co == CO.Command.SENDPRODUCTION :
-            sendProduction(self)
+            _sendProduction(self)
             return True
         if self.co == CO.Command.BUYBUILDING :
-            buyBuilding(self,selfun,selfun1)
+            _buyBuilding(self,"building",selfun,selfun1)
+            return True
+        if self.co == CO.Command.BUYWONDER :
+            _buyBuilding(self,"wonder",selfun,selfun1)
+            return True
+        if self.co == CO.Command.DEVOUTTOCULTURE:
+            _devottoCluster(self)
+            return True
+        if self.co == CO.Command.ADVANCECULTURE:
+            _advanceCulture(self)
+            return True
+        if self.co == CO.Command.SPENDTRADE:
+            _spendTrade(self,selfun,param)
+            return True
+        if self.co == CO.Command.DISCARDCARD :
+            _discardCard(self)
             return True
         return False
         

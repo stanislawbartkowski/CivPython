@@ -5,7 +5,6 @@ Created on 16 lut 2019
 '''
 
 import os
-import unittest
 from pathlib import Path
 from com.civ.play.Play import TestGame
 

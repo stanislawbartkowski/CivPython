@@ -5,7 +5,7 @@ Created on 1 lut 2019
 '''
 
 from enum import Enum
-
+from com.civ.play.misc import MapCR
 
 class Command(Enum):
     SETCAPITAL = 1
@@ -27,75 +27,46 @@ class Command(Enum):
     HARVESTRESOURCE = 17
     SENDPRODUCTION = 18
     BUYBUILDING = 19
-    
-    
+    DEVOUTTOCULTURE = 20
+    ADVANCECULTURE = 21
+    SPENDTRADE = 22
+    DISCARDCARD = 23
+    BUYWONDER = 24
+        
+_map = {
+  "SETCAPITAL" : Command.SETCAPITAL,
+  "SETSCOUT" : Command.SETSCOUT,
+  "SETARMY" : Command.SETARMY,
+  "BUYARTILLERY" : Command.BUYARTILLERY,
+  "BUYINFANTRY" : Command.BUYINFANTRY,
+  "BUYMOUNTED" : Command.BUYMOUNTED,
+  "BUYAIRCRAFT" : Command.BUYAIRCRAFT,
+  "BUYARMY" : Command.BUYARMY,
+  "BUYSCOUT" : Command.BUYSCOUT,
+  "STARTMOVE" : Command.STARTMOVE,
+  "MOVE" : Command.MOVE,
+  "REVEALTILE" : Command.REVEALTILE,
+  "ENDOFMOVE" : Command.ENDOFMOVE,
+  "ENDOFPHASE" : Command.ENDOFPHASE,
+  "RESEARCH" : Command.RESEARCH,
+  "EXPLOREHUT" : Command.EXPLOREHUT,
+  "HARVESTRESOURCE" : Command.HARVESTRESOURCE,
+  "SENDPRODUCTION" : Command.SENDPRODUCTION,
+  "BUYBUILDING" : Command.BUYBUILDING,
+  "DEVOUTTOCULTURE" : Command.DEVOUTTOCULTURE,
+  "ADVANCECULTURE" : Command.ADVANCECULTURE,
+  "SPENDTRADE" : Command.SPENDTRADE,
+  "DISCARDCARD" : Command.DISCARDCARD,
+  "BUYWONDER" : Command.BUYWONDER
+}
 
-SETCAPITAL = "SETCAPITAL"
-SETSCOUT = "SETSCOUT"
-SETARMY = "SETARMY"
-BUYARTILLERY = "BUYARTILLERY"
-BUYINFANTRY = "BUYINFANTRY"
-BUYMOUNTED = "BUYMOUNTED"
-BUYAIRCRAFT = "BUYAIRCRAFT"
-BUYARMY = "BUYARMY"
-BUYSCOUT = "BUYSCOUT"
-STARTMOVE = "STARTMOVE"
-MOVE = "MOVE"
-REVEALTILE = "REVEALTILE"
-ENDOFMOVE = "ENDOFMOVE"
-ENDOFPHASE = "ENDOFPHASE"
-RESEARCH = "RESEARCH"
-EXPLOREHUT = "EXPLOREHUT"
-HARVESTRESOURCE = "HARVESTRESOURCE"
-SENDPRODUCTION = "SENDPRODUCTION"
-BUYBUILDING = "BUYBUILDING"
+_M = MapCR(_map) 
 
+def toCommand(s): return _M.toC(s)
 
-def toCommand(s):
-    if s == SETCAPITAL : return Command.SETCAPITAL
-    if s == SETSCOUT : return Command.SETSCOUT
-    if s == SETARMY : return Command.SETARMY
-    if s == BUYARTILLERY : return Command.BUYARTILLERY
-    if s == BUYINFANTRY : return Command.BUYINFANTRY
-    if s == BUYMOUNTED : return Command.BUYMOUNTED
-    if s == BUYAIRCRAFT : return Command.BUYAIRCRAFT
-    if s == BUYARMY : return Command.BUYARMY
-    if s == BUYSCOUT : return Command.BUYSCOUT
-    if s == STARTMOVE : return Command.STARTMOVE
-    if s == MOVE : return Command.MOVE
-    if s == REVEALTILE : return Command.REVEALTILE
-    if s == ENDOFMOVE : return Command.ENDOFMOVE
-    if s == ENDOFPHASE : return Command.ENDOFPHASE
-    if s == RESEARCH : return Command.RESEARCH
-    if s == EXPLOREHUT : return Command.EXPLOREHUT
-    if s == HARVESTRESOURCE : return Command.HARVESTRESOURCE
-    if s == SENDPRODUCTION : return Command.SENDPRODUCTION
-    if s == BUYBUILDING : return Command.BUYBUILDING
-    return None
+def isCommand(s): return _M.isC(s)
 
-
-def toS(c):
-    if c == Command.SETCAPITAL : return SETCAPITAL
-    if c == Command.SETSCOUT : return SETSCOUT
-    if c == Command.SETARMY : return SETARMY
-    if c == Command.BUYARTILLERY : return BUYARTILLERY
-    if c == Command.BUYINFANTRY : return BUYINFANTRY
-    if c == Command.BUYMOUNTED : return BUYMOUNTED
-    if c == Command.BUYAIRCRAFT : return BUYAIRCRAFT
-    if c == Command.BUYARMY : return BUYARMY
-    if c == Command.BUYSCOUT : return BUYSCOUT
-    if c == Command.STARTMOVE : return STARTMOVE
-    if c == Command.MOVE : return MOVE
-    if c == Command.REVEALTILE : return REVEALTILE
-    if c == Command.ENDOFMOVE : return ENDOFMOVE
-    if c == Command.ENDOFPHASE : return ENDOFPHASE
-    if c == Command.RESEARCH : return RESEARCH
-    if c == Command.EXPLOREHUT : return EXPLOREHUT
-    if c == Command.HARVESTRESOURCE : return HARVESTRESOURCE
-    if c == Command.SENDPRODUCTION : return SENDPRODUCTION
-    if c == Command.BUYBUILDING : return BUYBUILDING
-    return None
-
+def toS(v) : return _M.toK(v)
 
 def isMove(c):
     return c == Command.Move or c == Command.REVEALTILE or c == Command.ENDOFMOVE or c == Command.EXPLOREHUT

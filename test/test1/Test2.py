@@ -6,7 +6,6 @@ Created on 16 lut 2019
 import unittest
 
 from com.civ.rest import CivRest as C
-from com.civ.play.Play import TestGame
 from com.civ.commands import Commands as CO
 
 from helper import TestHelper
