@@ -272,6 +272,9 @@ class Play:
         if self.co == CO.Command.BUYWONDER :
             _buyBuilding(self,"wonder",selfun,selfun1)
             return True
+        if self.co == CO.Command.GREATPERSONPUT :
+            _buyBuilding(self,"greatperson",selfun,selfun1)
+            return True
         if self.co == CO.Command.DEVOUTTOCULTURE:
             _devottoCluster(self)
             return True

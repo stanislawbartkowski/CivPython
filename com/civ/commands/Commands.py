@@ -32,6 +32,7 @@ class Command(Enum):
     SPENDTRADE = 22
     DISCARDCARD = 23
     BUYWONDER = 24
+    GREATPERSONPUT = 25
         
 _map = {
   "SETCAPITAL" : Command.SETCAPITAL,
@@ -57,7 +58,8 @@ _map = {
   "ADVANCECULTURE" : Command.ADVANCECULTURE,
   "SPENDTRADE" : Command.SPENDTRADE,
   "DISCARDCARD" : Command.DISCARDCARD,
-  "BUYWONDER" : Command.BUYWONDER
+  "BUYWONDER" : Command.BUYWONDER,
+  "GREATPERSONPUT" : Command.GREATPERSONPUT
 }
 
 _M = MapCR(_map) 

@@ -18,7 +18,7 @@ class Test(unittest.TestCase):
     def setUp(self):
         C.registerAutom()
 
-#    @unittest.skip("demonstrating skipping")
+    @unittest.skip("demonstrating skipping")
     def test1(self):
         print("Test SPENDTRADE")
         G = TestHelper.DeployTestGame("test1", "game-51.json", "America")
@@ -42,7 +42,7 @@ class Test(unittest.TestCase):
         self.assertEqual(t,1)
         G.deleteGame()
 
-#    @unittest.skip("demonstrating skipping")
+    @unittest.skip("demonstrating skipping")
     def test2(self):
         print("Test ADVANCECULTURE and DROPCARD")
         G = TestHelper.DeployTestGame("test1", "game-52.json", "America")
@@ -62,6 +62,7 @@ class Test(unittest.TestCase):
         self.assertEqual(len(cards),2)
         G.deleteGame()
 
+    @unittest.skip("demonstrating skipping")
     def test3(self):
         print("Test BUYWONDER")
         G = TestHelper.DeployTestGame("test1", "game-53.json", "America")
@@ -74,4 +75,18 @@ class Test(unittest.TestCase):
         print(s)
         print("TheCollosus is expected to be there")
         self.assertEqual(s["wonder"], "TheColossus")
+        G.deleteGame()
+        
+    def test4(self):
+        print("Test BUYWONDER")
+        G = TestHelper.DeployTestGame("test1", "game-54.json", "America")
+        PA = G.playA()
+        PA.readBoard()
+        PA.playSingleCommand(CO.Command.GREATPERSONPUT,lambda x : misc.eqP({"row" : 2, "col" : 2}, x['p']),
+                                                  lambda b : misc.eqP({"row" : 1, "col" : 1}, b['p']) and b['greatperson'] == "AlanTuring")
+        PA.readBoard()
+        s = getSquare(PA, 1,1)
+        print(s)
+        print("Scientist is expected here")
+        self.assertEqual(s["greatpersontype"], "Scientist")
         G.deleteGame()
