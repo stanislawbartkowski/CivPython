@@ -37,6 +37,9 @@ def getResources(P):
 def getPlayerCards(P):
     return _getYou(P)["cultureresource"]["cards"]
 
+def getPlayerGreatPersons(P):
+    return _getYou(P)["cultureresource"]["persons"]
+
 def _getPlayerResources(P):
     return _getYou(P)["resources"]
 
@@ -178,7 +181,7 @@ def _devottoCluster(P) :
     city = misc.getRandom(P.i)
     P.executeCommandPP(city['p'],city['list'])
     
-def _advanceCulture(P):
+def _doAction(P):
     P.executeCommand()    
     
 def _spendTrade(P,selfun,param):
@@ -272,14 +275,14 @@ class Play:
         if self.co == CO.Command.BUYWONDER :
             _buyBuilding(self,"wonder",selfun,selfun1)
             return True
-        if self.co == CO.Command.GREATPERSONPUT :
+        if self.co == CO.Command.GREATPERSONPUT or self.co == CO.Command.GREATPERSONPUTNOW:
             _buyBuilding(self,"greatperson",selfun,selfun1)
             return True
         if self.co == CO.Command.DEVOUTTOCULTURE:
             _devottoCluster(self)
             return True
-        if self.co == CO.Command.ADVANCECULTURE:
-            _advanceCulture(self)
+        if self.co == CO.Command.ADVANCECULTURE or self.co == CO.Command.GREATPERSONPUTNOWRESIGN :
+            _doAction(self)
             return True
         if self.co == CO.Command.SPENDTRADE:
             _spendTrade(self,selfun,param)
