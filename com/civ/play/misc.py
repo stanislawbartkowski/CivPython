@@ -47,6 +47,6 @@ class MapCR :
         return self._map.get(k) != None
 
     def toK(self,val):
-        for e in self._map.items() : 
-            if e[1] == val : return e[0]
+        for k,v in self._map.items() : 
+            if v == val : return k
         raise Exception('Value does not exist in the map', val)

@@ -22,6 +22,11 @@ def _getB(P):
 
 def _getYou(P):
     return _getB(P)['you']
+
+def _getOther(P):
+    l = _getB(P)['others']
+    if len(l) : return l[0]
+    return None
     
 def _getMap(P):
     return _getB(P)["map"]        
@@ -76,6 +81,11 @@ def cultureProgress(P):
 def getPlayerTrade(P):
     t = _getYou(P)['trade']
     return t
+
+def getPlayerHutVillages(P):
+    t = _getYou(P)["hutvillages"]['list']
+    return t
+    
 
 # -------------------------
 # supporting methods
@@ -154,13 +164,13 @@ def _revealTile(P) :
     P.executeCommandPP(r["p"], r["orientation"])
 
     
-def endOfPhase(P):
+def _endOfPhase(P):
     P.co = CO.Command.ENDOFPHASE
     phase = _getB(P)["game"]["phase"]
     P.executeCommandJ(phase)
 
     
-def researchTechnology(P):
+def _researchTechnology(P):
     tech = misc.getRandom(P.i)
     P.executeCommandJ(tech)
 
@@ -190,7 +200,43 @@ def _spendTrade(P,selfun,param):
     
 def _discardCard(P):
     card = misc.getRandom(P.i)
-    P.executeCommandJ(card)        
+    P.executeCommandJ(card)
+    
+def _selectHV(P,hv,resource):
+    t = getPlayerHutVillages(P)
+    s = RE.toHVS(hv)
+    matches = [x for x in t if x['hv'] == s and x['resource'] == resource]
+    return matches
+
+def _selectMarketRes(P,resource):
+    no = getPlayerResourceN(P, resource)
+    if no == 0 : return None
+    return {"resource" : RE.toS(resource)}
+    
+    
+def _selectResource(P,resource):
+    rs = RE.toS(resource)
+    # select hut and resource
+    m = _selectHV(P, RE.HV.HUT,rs)
+    res = misc.getRandom(m)
+    if res : return res
+    # market
+    res = _selectMarketRes(P, resource)
+    if res : return res
+    # select village
+    m = _selectHV(P, RE.HV.VILLAGE,rs)
+    return misc.getRandom(m)            
+    
+def _currencyAction(P) :
+    res = _selectResource(P, RE.Resource.INCENSE)
+    P.executeCommandJ(res)
+    
+def _useSilkAction9(P):
+    res = _selectResource(P, RE.Resource.SILK)
+    # select side receving 6 silk
+    o = _getOther(P)
+    if o : P.executeCommandJ({"resource" : res, "civ" : o['civ']})
+    else : P.executeCommandJ({"resource" : res})
  
 class Play:
 
@@ -232,6 +278,7 @@ class Play:
         comm = self.getCommands()
         return misc.getRandom(comm)
     
+    
     def playSingleCommand(self, co, selfun=None,selfun1=None,param=None):
         self.co = co
         if co == CO.Command.ENDOFMOVE : self.i = []
@@ -258,10 +305,10 @@ class Play:
             _revealTile(self)
             return True
         if self.co == CO.Command.ENDOFPHASE :
-            endOfPhase(self)
+            _endOfPhase(self)
             return True
         if self.co == CO.Command.RESEARCH :
-            researchTechnology(self)
+            _researchTechnology(self)
             return True
         if self.co == CO.Command.HARVESTRESOURCE :
             _harvestResource(self)
@@ -289,6 +336,12 @@ class Play:
             return True
         if self.co == CO.Command.DISCARDCARD :
             _discardCard(self)
+            return True
+        if self.co == CO.Command.CURRENCYACTION :
+            _currencyAction(self)
+            return True
+        if self.co == CO.Command.USESILKFORTRADE9 :
+            _useSilkAction9(self)
             return True
         return False
         

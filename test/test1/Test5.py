@@ -7,8 +7,9 @@ import unittest
 
 from com.civ.rest import CivRest as C
 from com.civ.commands import Commands as CO
-from com.civ.play.Play import getSquare,getPlayerTrade,getPlayerCards,getPlayerGreatPersons
+from com.civ.play.Play import getSquare,getPlayerTrade,getPlayerCards,getPlayerGreatPersons,getPlayerResourceN,getPlayerHutVillages
 from com.civ.play import misc
+from com.civ.commands import Resources as RE
 
 
 from helper import TestHelper
@@ -107,6 +108,7 @@ class Test(unittest.TestCase):
         self.assertEqual(s["greatpersontype"], "Scientist")
         G.deleteGame()
         
+    @unittest.skip("demonstrating skipping")        
     def test7(self):
         print("Advance Culture and keep great person on hold")
         G = TestHelper.DeployTestGame("test1", "game-55.json", "America")
@@ -116,4 +118,53 @@ class Test(unittest.TestCase):
         g = getPlayerGreatPersons(PA)
         print("Check that LouisPasteur is down the list")
         self.assertIn("LouisPasteur", g) 
+        G.deleteGame()
+
+    @unittest.skip("demonstrating skipping")
+    def test8(self):
+        print("Use technology spending Hut Incense")
+        G = TestHelper.DeployTestGame("test1", "game-58.json", "America")
+        PA = G.playA()
+        PA.readBoard()
+        cul1 = getPlayerResourceN(PA,RE.Resource.CULTURE)
+        print(cul1)
+        print("Culture before:" + str(cul1))
+        hvl = getPlayerHutVillages(PA)
+        print(hvl)
+        
+        PA.playSingleCommand(CO.Command.CURRENCYACTION)
+        PA.readBoard()
+        cul2 = getPlayerResourceN(PA,RE.Resource.CULTURE)
+        print(cul2)
+        print("Culture after:" + str(cul2) + " Expected 3")
+        self.assertEqual(cul2, cul1+3)
+        print("List of hv should be empty now")
+        hvl = getPlayerHutVillages(PA)
+        print(hvl)
+        self.assertListEqual(hvl,[])
+        
+        G.deleteGame()
+
+#    @unittest.skip("demonstrating skipping")
+    def test9(self):
+        print("Use technology spending market Incense")
+        G = TestHelper.DeployTestGame("test1", "game-59.json", "America")
+        PA = G.playA()
+        PA.readBoard()
+        cul1 = getPlayerResourceN(PA,RE.Resource.CULTURE)
+        print(cul1)
+        print("Culture before:" + str(cul1))
+        ince1 = getPlayerResourceN(PA,RE.Resource.INCENSE)
+        print("Expected one marker Incense")            
+        print(ince1)
+        self.assertEqual(ince1,1)
+        
+        PA.playSingleCommand(CO.Command.CURRENCYACTION)
+        PA.readBoard()
+        print("Expected 3 culture and 0 incense")
+        cul2 = getPlayerResourceN(PA,RE.Resource.CULTURE)
+        self.assertEqual(cul2,3)
+        ince2 = getPlayerResourceN(PA,RE.Resource.INCENSE)
+        self.assertEqual(ince2,0)
+
         G.deleteGame()
