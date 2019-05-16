@@ -15,15 +15,21 @@ def joinGame():
     token = C.joinGame(gameid, civwaiting).split(',')[0]
     return (token, gameid)
 
-
-def getRandom(a, selfun=None):
-    if len(a) == 0 : return None
+def getRandomI(a, selfun=None):
+    if len(a) == 0 : return (None,-1)
     if selfun == None :
         i = random.randrange(0, len(a))
-        return a[i]
-    for elem in a :
-        if selfun(elem) : return elem
-    return None    
+        return (a[i],i)
+    i = 0
+    for elem in a :        
+        if selfun(elem) : return (elem,i)
+        i = i + 1
+    return (None,-1)    
+
+
+def getRandom(a, selfun=None):
+    (re,_) = getRandomI(a, selfun)
+    return re
 
 
 def pToJ(row, col):

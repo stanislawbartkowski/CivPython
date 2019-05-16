@@ -86,6 +86,9 @@ def getPlayerHutVillages(P):
     t = _getYou(P)["hutvillages"]['list']
     return t
     
+def getBattle(P):
+    bo = _getB(P)
+    return bo['battle']    
 
 # -------------------------
 # supporting methods
@@ -162,13 +165,11 @@ def _revealTile(P) :
     # can be more then 1 tile to reveal
     r = misc.getRandom(l)    
     P.executeCommandPP(r["p"], r["orientation"])
-
     
 def _endOfPhase(P):
     P.co = CO.Command.ENDOFPHASE
     phase = _getB(P)["game"]["phase"]
     P.executeCommandJ(phase)
-
     
 def _researchTechnology(P):
     tech = misc.getRandom(P.i)
@@ -237,6 +238,37 @@ def _useSilkAction9(P):
     o = _getOther(P)
     if o : P.executeCommandJ({"resource" : res, "civ" : o['civ']})
     else : P.executeCommandJ({"resource" : res})
+    
+def _attack(P):
+    l = P.i['attack']
+    res = misc.getRandom(l)
+    P.executeCommandP(res)
+    
+def _playUnit(P):
+    ba = getBattle(P)
+    at = ba['attacker']
+    de = ba['defender']
+    # turn in attacker and defender excludes themselves
+    if at['turn'] : am = at
+    else : am = de
+    # am - army making attack now
+    (_,fro) = misc.getRandomI(am['waiting']['list'])    
+    # get random unit from standing units
+    f = am['front']
+    # list of empty slots
+    slots = list(filter( lambda x : f[x] == None, list(range(0,len(f)))))
+    to = misc.getRandom(slots)
+    P.executeCommand(fro,to)
+    
+def playBattle(P):
+    while True :
+        P.readBoard()
+        b = getBattle(P)
+        if b["endofbattle"] : break
+        P.co = CO.Command.PLAYUNIT
+        _playUnit(P)
+    P.playSingleCommand(CO.Command.ENDBATTLE)
+      
  
 class Play:
 
@@ -281,7 +313,7 @@ class Play:
     
     def playSingleCommand(self, co, selfun=None,selfun1=None,param=None):
         self.co = co
-        if co == CO.Command.ENDOFMOVE : self.i = []
+        if co == CO.Command.ENDOFMOVE or co == CO.Command.PLAYUNIT or co == CO.Command.PLAYUNITIRON or co == CO.Command.ENDBATTLE: self.i = []
         else : self.i = C.itemizeCommand(self.token, CO.toS(self.co))
         if self.co == CO.Command.SETCAPITAL : 
             _buildCity(self)
@@ -343,7 +375,18 @@ class Play:
         if self.co == CO.Command.USESILKFORTRADE9 :
             _useSilkAction9(self)
             return True
+        if self.co == CO.Command.ATTACK :
+            _attack(self)
+            return True
+        if self.co == CO.Command.PLAYUNIT or self.co == CO.Command.PLAYUNITIRON :
+            _playUnit(self)
+            return True    
+        if self.co == CO.Command.ENDBATTLE : 
+            # empty list
+            self.executeCommandJ([])
+            return True    
         return False
+    
         
     def playCommand(self):
         co = self.__chooseCommand()
@@ -391,4 +434,5 @@ class TestGame :
         if self.tokena : C.unregisterG(self.tokena)
         if self.tokenb : C.unregisterG(self.tokenb)
         C.deleteGame(self.gameid)
+        
         
