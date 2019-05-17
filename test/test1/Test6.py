@@ -80,8 +80,10 @@ class Test6(unittest.TestCase):
         # now play unit
         PA.playSingleCommand(CO.Command.PLAYUNIT)
         PA.readBoard()
+        self.assertTrue(PA.boardChanged(),"Board has changed")
         
         PA.readBoard()
+        self.assertFalse(PA.boardChanged(),"Board has not changed")
 
         playBattle(PA)
                 

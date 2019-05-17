@@ -94,7 +94,10 @@ def joinGame(gameid, civ):
 
 
 def getBoard(token):
-    return json.loads(__getRestCivData(2, token))
+    te = __getRestCivData(2, token)
+    # can be empty if nothing has changed since previous getBoard
+    if te == "" : return None
+    return json.loads(te)
 
 
 def itemizeCommand(token, command):

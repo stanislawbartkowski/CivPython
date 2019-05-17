@@ -275,6 +275,7 @@ class Play:
     def __init__(self, token):
         self.token = token
         self.visited = None
+        self.bchanged = True
         
     def executeCommand(self, row=-1 , col=-1, jsparam=None):
         C.executeCommand(self.token, CO.toS(self.co), row, col, jsparam)
@@ -287,9 +288,16 @@ class Play:
         
     def executeCommandPP(self, p, pp):
         self.executeCommandP(p, json.dumps(pp))
+        
+    def boardChanged(self):
+        return self.bchanged
 
     def readBoard(self):
-        self.b = C.getBoard(self.token)
+        b = C.getBoard(self.token)
+        # can be empty if nothing has changed
+        # leave the previous board
+        self.bchanged = b != None
+        if b : self.b = b
         
     def getCommands(self):
         commands = _getYou(self)['commands']
