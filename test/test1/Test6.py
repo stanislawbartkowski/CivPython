@@ -7,8 +7,7 @@ import unittest
 
 from com.civ.rest import CivRest as C
 from com.civ.commands import Commands as CO
-from com.civ.play.Play import getSquare,getPlayerTrade,getBattle,getPlayerGreatPersons,getPlayerResourceN,getPlayerHutVillages,playBattle
-from com.civ.play import misc
+from com.civ.play.Play import getPlayerTrade,getBattle,getPlayerResourceN,playBattle,playTwoBattle
 from com.civ.commands import Resources as RE
 
 from helper import TestHelper
@@ -62,6 +61,7 @@ class Test6(unittest.TestCase):
 
         G.deleteGame()
 
+    @unittest.skip("demonstrating skipping")
     def test3(self):
         print("Test ATTACK and BATTLE")
         G = TestHelper.DeployTestGame("test1", "game-62.json", "America")
@@ -94,3 +94,28 @@ class Test6(unittest.TestCase):
         self.assertIsNone(b, "Bloodshed stopped")
         
         G.deleteGame()
+
+    def test4(self):
+        print("Take loot after battle")
+        G = TestHelper.DeployTestGame("test1", "game-64.json", "America,China")
+        
+        # China can attack
+        PB = G.playB()
+        PA = G.playA()
+        PB.readBoard()
+        
+        PB.playSingleCommand(CO.Command.ATTACK)        
+        PB.readBoard()
+        b = getBattle(PB)
+        print(b)
+        self.assertIsNotNone(b,"Now the battle started...")
+        playTwoBattle(PA,PB)
+        
+        # check end of battle
+        PB.readBoard()
+        b = getBattle(PB)
+        print(b)
+        self.assertIsNone(b,"End of battle")
+        
+        G.deleteGame()
+        

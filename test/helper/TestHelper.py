@@ -19,7 +19,9 @@ def readJsonFile(test, fname):
 def DeployTestGame(test, fname, civ):
     g = TestGame()
     board = readJsonFile(test, fname)
-    g.deploySingleGame(board, civ)
+    a = civ.split(",")
+    if len(a) == 1: g.deploySingleGame(board, civ)
+    else : g.deployTwoGame(board, civ)
     return g
 
 

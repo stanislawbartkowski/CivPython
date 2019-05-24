@@ -23,6 +23,9 @@ def _getB(P):
 def _getYou(P):
     return _getB(P)['you']
 
+def _getCiv(P):
+    return _getYou(P)['civ']
+
 def _getOther(P):
     l = _getB(P)['others']
     if len(l) : return l[0]
@@ -248,9 +251,10 @@ def _playUnit(P):
     ba = getBattle(P)
     at = ba['attacker']
     de = ba['defender']
-    # turn in attacker and defender excludes themselves
+    # turn in attacker and defender excludes themselves    
     if at['turn'] : am = at
     else : am = de
+    if not am['you'] : return False
     # am - army making attack now
     (_,fro) = misc.getRandomI(am['waiting']['list'])    
     # get random unit from standing units
@@ -258,17 +262,54 @@ def _playUnit(P):
     # list of empty slots
     slots = list(filter( lambda x : f[x] == None, list(range(0,len(f)))))
     to = misc.getRandom(slots)
+    P.co = CO.Command.PLAYUNIT
     P.executeCommand(fro,to)
+    return True
+
+def _endOfBattle(P):
+    P.readBoard()
+    b = getBattle(P)
+    return b["endofbattle"]
     
 def playBattle(P):
-    while True :
-        P.readBoard()
-        b = getBattle(P)
-        if b["endofbattle"] : break
-        P.co = CO.Command.PLAYUNIT
-        _playUnit(P)
+    while not _endOfBattle(P) : _playUnit(P)    
     P.playSingleCommand(CO.Command.ENDBATTLE)
-      
+    
+    
+def playTwoBattle(PA,PB):
+    
+    while True:
+        if _endOfBattle(PA) : break
+        if _playUnit(PA) : continue
+        if _endOfBattle(PB) : break
+        _playUnit(PB)
+        
+    PB.readBoard()
+    # identify the winner
+    b = getBattle(PA)
+    if b['attackerwinner'] : civ = b['attacker']['civ']
+    else : civ = b['defender']['civ']
+    if _getCiv(PA) == civ : PA.playSingleCommand(CO.Command.ENDBATTLE)
+    else : PB.playSingleCommand(CO.Command.ENDBATTLE)
+    
+def _winnerLoot(P):
+    l = getBattle(P)['winnerloot']    
+    loottotake = l['loot']
+    li = l['list']
+    loot = []
+    while True :
+        # collect list of loots affordable (list of indexes)
+        alist = list(filter( lambda i : li[i]['loot'] <=loottotake, list(range(0,len(li)))))
+        if len(alist) == 0 : break
+        # take random loot
+        ll = misc.getRandom(alist)
+        # add to list
+        loot.append(li[ll])
+        # decrease the loot
+        loottotake = loottotake - li[ll]['loot']
+        li.pop(ll)
+        # next loot
+    return loot
  
 class Play:
 
@@ -390,8 +431,7 @@ class Play:
             _playUnit(self)
             return True    
         if self.co == CO.Command.ENDBATTLE : 
-            # empty list
-            self.executeCommandJ([])
+            self.executeCommandJ(_winnerLoot(self))
             return True    
         return False
     
@@ -412,6 +452,13 @@ class TestGame :
         a = C.postsingleGame(board, civ).split(',')
         self.tokena = a[0]
         self.gameid = a[1]
+
+    def deployTwoGame(self, board, civ):
+        a = C.postsingleGame(board, civ).split(',')
+        self.tokena = a[0]
+        self.tokenb = a[1]
+        self.gameid = a[2]
+
                 
     def registerSingleGame(self, civ):
         a = C.singlePlayerGame(civ)
