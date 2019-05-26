@@ -15,10 +15,13 @@ def joinGame():
     token = C.joinGame(gameid, civwaiting).split(',')[0]
     return (token, gameid)
 
+def getRandomNo(no):
+    return random.randrange(0, no)
+
 def getRandomI(a, selfun=None):
     if len(a) == 0 : return (None,-1)
     if selfun == None :
-        i = random.randrange(0, len(a))
+        i = getRandomNo(len(a))
         return (a[i],i)
     i = 0
     for elem in a :        

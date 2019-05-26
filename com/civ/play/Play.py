@@ -10,6 +10,7 @@ from com.civ.commands import Resources as RE
 import random
 from com.civ.play import misc
 import json
+import logging
 
 random.seed()
 
@@ -77,12 +78,19 @@ def getResourceN(P,r):
     rr =  getResources(P)
     return _getRN(rr,r)
 
+def endOfGame(P):
+    return _getB(P)["endofgame"]
+
 def cultureProgress(P):
     y = _getYou(P)['cultureprogress']
     return y
 
 def getPlayerTrade(P):
     t = _getYou(P)['trade']
+    return t
+
+def _getPlayerTradeForProd(P):
+    t = _getYou(P)['tradeforprod']
     return t
 
 def getPlayerHutVillages(P):
@@ -116,7 +124,7 @@ def _buildCity(P) :
 
     
 def _deployFigure(P): 
-    print(P.i)
+#    print(P.i)
     # choose random city and point
     city = misc.getRandom(P.i)
     # get random square
@@ -126,7 +134,7 @@ def _deployFigure(P):
 
     
 def _buyUnit(P):
-    print(P.i)    
+#    print(P.i)    
     # choose random city
     city = misc.getRandom(P.i)
     c = city["p"]
@@ -200,6 +208,12 @@ def _doAction(P):
     
 def _spendTrade(P,selfun,param):
     city = misc.getRandom(P.i,selfun)
+    if param == None :
+        # calculate random
+        no = int(getPlayerTrade(P)/_getPlayerTradeForProd(P))
+        # int() calculates prod
+        param = misc.getRandomNo(no) + 1
+        # calculate random from 0 to no
     P.executeCommandPP(city['p'],param)
     
 def _discardCard(P):
@@ -237,7 +251,7 @@ def _currencyAction(P) :
     
 def _useSilkAction9(P):
     res = _selectResource(P, RE.Resource.SILK)
-    # select side receving 6 silk
+    # select side receiving 6 silk
     o = _getOther(P)
     if o : P.executeCommandJ({"resource" : res, "civ" : o['civ']})
     else : P.executeCommandJ({"resource" : res})
@@ -362,6 +376,7 @@ class Play:
     
     def playSingleCommand(self, co, selfun=None,selfun1=None,param=None):
         self.co = co
+        logging.info(_getCiv(self) + " " + str(co))
         if co == CO.Command.ENDOFMOVE or co == CO.Command.PLAYUNIT or co == CO.Command.PLAYUNITIRON or co == CO.Command.ENDBATTLE: self.i = []
         else : self.i = C.itemizeCommand(self.token, CO.toS(self.co))
         if self.co == CO.Command.SETCAPITAL : 
@@ -475,9 +490,15 @@ class TestGame :
     def playB(self):
         return Play(self.tokenb)
     
-    def play(self, P):
+    def _play(self, P,PO = None):
         P.readBoard()
-        while P.playCommand() : P.readBoard()
+        while True :
+            if endOfGame(P) : return False 
+            if getBattle(P) : 
+                playTwoBattle(P, PO)
+            else:
+                if not P.playCommand() : return True 
+            P.readBoard()
 
     def playN(self, P,no):
         P.readBoard()
@@ -490,4 +511,12 @@ class TestGame :
         if self.tokenb : C.unregisterG(self.tokenb)
         C.deleteGame(self.gameid)
         
-        
+    def playGameToEnd(self):
+        PA = self.playA()
+        PB = self.playB()        
+        while True:
+            print("loop")
+            if not self._play(PA,PB) : 
+                return
+            if not self._play(PB,PA) : 
+                return

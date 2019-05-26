@@ -7,15 +7,17 @@ import unittest
 
 from com.civ.rest import CivRest as C
 from com.civ.commands import Commands as CO
-from com.civ.play.Play import getPlayerTrade,getBattle,getPlayerResourceN,playBattle,playTwoBattle
+from com.civ.play.Play import getPlayerTrade,getBattle,getPlayerResourceN,playBattle,playTwoBattle,endOfGame
 from com.civ.commands import Resources as RE
+from com.civ.play.Play import TestGame
+
 
 from helper import TestHelper
 
 class Test6(unittest.TestCase):
 
     def setUp(self):
-        C.registerAutom()
+        TestHelper.startTest()
 
     @unittest.skip("demonstrating skipping")
     def test1(self):
@@ -95,6 +97,7 @@ class Test6(unittest.TestCase):
         
         G.deleteGame()
 
+    @unittest.skip("demonstrating skipping")
     def test4(self):
         print("Take loot after battle")
         G = TestHelper.DeployTestGame("test1", "game-64.json", "America,China")
@@ -116,6 +119,33 @@ class Test6(unittest.TestCase):
         b = getBattle(PB)
         print(b)
         self.assertIsNone(b,"End of battle")
+        
+        G.deleteGame()
+        
+    @unittest.skip("demonstrating skipping")        
+    def test5(self):
+        print("End of game")
+        G = TestHelper.DeployTestGame("test1", "game-65.json", "America")
+        PA = G.playA()
+        PA.readBoard()
+        e = endOfGame(PA)
+        self.assertIsNone(e, "The show must go on")
+        PA.playSingleCommand(CO.Command.ADVANCECULTURE)
+
+        PA.readBoard()
+        e = endOfGame(PA)
+        print(e)
+        self.assertIsNotNone(e, "The end")
+        
+        
+        G.deleteGame()
+        
+    def test6(self):
+        print("Play whole game to the end")
+        G = TestGame()
+        G.registerTwoGames("China,Rome")
+        
+        G.playGameToEnd()
         
         G.deleteGame()
         

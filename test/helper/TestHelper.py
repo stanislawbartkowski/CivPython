@@ -7,6 +7,12 @@ Created on 16 lut 2019
 import os
 from pathlib import Path
 from com.civ.play.Play import TestGame
+from com.civ.rest import CivRest as C
+import logging
+
+def startTest() :
+    C.registerAutom()
+    logging.basicConfig(level=logging.INFO)
 
 
 def readJsonFile(test, fname):
