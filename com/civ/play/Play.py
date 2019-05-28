@@ -33,7 +33,10 @@ def _getOther(P):
     return None
     
 def _getMap(P):
-    return _getB(P)["map"]        
+    return _getB(P)["map"]
+
+def getUnitList(P):        
+    return _getYou(P)["units"]["list"]
 
 def getSquare(P,row,col):
     map = _getMap(P)
@@ -51,6 +54,9 @@ def getPlayerGreatPersons(P):
 
 def _getPlayerResources(P):
     return _getYou(P)["resources"]
+
+def getSuspend(P):
+    return _getYou(P)["suspended"]   
 
 def _getRN(rr,r) :
     s = RE.toS(r)
@@ -331,10 +337,13 @@ class Play:
         self.token = token
         self.visited = None
         self.bchanged = True
+
+    def doCommand(self,co,row=-1,col=-1,jsparam=None) :
+        C.executeCommand(self.token, CO.toS(co), row, col, jsparam)
         
     def executeCommand(self, row=-1 , col=-1, jsparam=None):
-        C.executeCommand(self.token, CO.toS(self.co), row, col, jsparam)
-        
+        self.doCommand(self.co, row, col, jsparam)
+                
     def executeCommandJ(self, jsparam):
         self.executeCommand(-1, -1, json.dumps(jsparam))        
         
@@ -372,8 +381,7 @@ class Play:
     def __chooseCommand(self):     
         comm = self.getCommands()
         return misc.getRandom(comm)
-    
-    
+        
     def playSingleCommand(self, co, selfun=None,selfun1=None,param=None):
         self.co = co
         logging.info(_getCiv(self) + " " + str(co))

@@ -7,7 +7,7 @@ import unittest
 
 from com.civ.rest import CivRest as C
 from com.civ.commands import Commands as CO
-from com.civ.play.Play import getPlayerTrade,getBattle,getPlayerResourceN,playBattle,playTwoBattle,endOfGame
+from com.civ.play.Play import getPlayerTrade,getBattle,getPlayerResourceN,playBattle,playTwoBattle,endOfGame,getSuspend,getUnitList
 from com.civ.commands import Resources as RE
 from com.civ.play.Play import TestGame
 
@@ -140,7 +140,52 @@ class Test6(unittest.TestCase):
         
         G.deleteGame()
         
+    def _testsuspend(self,co,number):        
+        print("Spy - invalided city action")
+        G = TestHelper.DeployTestGame("test1", "game-66.json", "China,Rome")
+        
+        # China can attack
+        PA = G.playA()
+        PA.readBoard()
+        u = getUnitList(PA)
+        print(u)
+        self.assertEqual(len(u),11,"Eleven units in China")
+        PB = G.playB()
+        # China
+        PA.doCommand(CO.Command.BUYMOUNTED, 2, 2)
+        PA.readBoard()
+        PB.readBoard()
+        s = getSuspend(PB)
+        self.assertIsNotNone(s,"Rome can suspend city action")
+        
+        u = getUnitList(PA)
+        print(u)
+        self.assertEqual(len(u),11,"The action is suspended for China, still 11")
+        
+        if co == CO.Command.WRITINGACTION : print("Rome cancels the BUYMOUNTED action")
+        else : print("Rome allows the BUYMOUNTED action")
+        
+        PB.doCommand(co)
+        
+        PA = G.playA()
+        PA.readBoard()
+        u = getUnitList(PA)
+        print(u)
+        print("Expected " + str(number) + " units.")
+        self.assertEqual(len(u),number)
+                
+        G.deleteGame()
+        
+#    @unittest.skip("demonstrating skipping")
     def test6(self):
+        self._testsuspend(CO.Command.WRITINGACTION, 11)
+
+    def test7(self):
+        self._testsuspend(CO.Command.LETSUSPENDEDGO, 12)
+
+            
+    @unittest.skip("demonstrating skipping")
+    def test8(self):
         print("Play whole game to the end")
         G = TestGame()
         G.registerTwoGames("China,Rome")

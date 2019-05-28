@@ -41,6 +41,8 @@ class Command(Enum):
     PLAYUNIT = 31
     PLAYUNITIRON = 32
     ENDBATTLE = 33
+    WRITINGACTION = 34
+    LETSUSPENDEDGO = 35
     
         
 _map = {
@@ -76,7 +78,9 @@ _map = {
   "ATTACK" : Command.ATTACK,
   "PLAYUNIT" : Command.PLAYUNIT,
   "PLAYUNITIRON" : Command.PLAYUNITIRON,
-  "ENDBATTLE" : Command.ENDBATTLE
+  "ENDBATTLE" : Command.ENDBATTLE,
+  "WRITINGACTION" : Command.WRITINGACTION,
+  "LETSUSPENDEDGO" : Command.LETSUSPENDEDGO
 }
 
 _M = MapCR(_map) 
