@@ -7,7 +7,7 @@ import unittest
 
 from com.civ.rest import CivRest as C
 from com.civ.commands import Commands as CO
-from com.civ.play.Play import getPlayerTrade,getBattle,getPlayerResourceN,playBattle,playTwoBattle,endOfGame,getSuspend,getUnitList
+from com.civ.play.Play import getPlayerTrade,getBattle,getPlayerResourceN,playBattle,playTwoBattle,endOfGame,getSuspend,getUnitList,playSuspend
 from com.civ.commands import Resources as RE
 from com.civ.play.Play import TestGame
 
@@ -176,21 +176,32 @@ class Test6(unittest.TestCase):
                 
         G.deleteGame()
         
-#    @unittest.skip("demonstrating skipping")
+    @unittest.skip("demonstrating skipping")
     def test6(self):
         self._testsuspend(CO.Command.WRITINGACTION, 11)
 
+    @unittest.skip("demonstrating skipping")
     def test7(self):
         self._testsuspend(CO.Command.LETSUSPENDEDGO, 12)
-
             
-    @unittest.skip("demonstrating skipping")
+#    @unittest.skip("demonstrating skipping")
     def test8(self):
         print("Play whole game to the end")
         G = TestGame()
         G.registerTwoGames("China,Rome")
         
         G.playGameToEnd()
+        
+        G.deleteGame()
+
+    @unittest.skip("demonstrating skipping")
+    def test9(self):
+        print("Suspended action")
+        G = TestHelper.DeployTestGame("test1", "game-69.json", "China,Rome")
+        PA = G.playA()
+        PA.readBoard()
+        
+        playSuspend(PA)
         
         G.deleteGame()
         

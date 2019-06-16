@@ -164,9 +164,13 @@ def _move(P, selfun):
     moved = []
     key = 'moves'
     if P.co == CO.Command.EXPLOREHUT : key = "explore"
-    for i in P.i[key] :
-        if not onList(i, P.visited) : 
-            moved.append(i)
+    list = P.i[key]
+    if len(list) == 1 : 
+        moved.append(list[0])
+    else:
+        for i in list :
+            if not onList(i, P.visited) : 
+                moved.append(i)
     
     if len(moved) == 0 :
         _endOfMove(P)
@@ -290,6 +294,20 @@ def _endOfBattle(P):
     P.readBoard()
     b = getBattle(P)
     return b["endofbattle"]
+
+def playSuspend(P) :
+    # suspend or anul
+    ra = misc.getRandomNo(2)
+    # 50 % 
+    if ra == 0 :
+        P.doCommand(CO.Command.LETSUSPENDEDGO)
+        return
+    # anul action
+    su = getSuspend(P)
+    li = su["list"]
+    # list of action to use
+    ac = misc.getRandom(li)
+    P.doCommandS(ac["command"])
     
 def playBattle(P):
     while not _endOfBattle(P) : _playUnit(P)    
@@ -337,6 +355,9 @@ class Play:
         self.token = token
         self.visited = None
         self.bchanged = True
+
+    def doCommandS(self,cos,row=-1,col=-1,jsparam=None) :
+        C.executeCommand(self.token, cos, row, col, jsparam)
 
     def doCommand(self,co,row=-1,col=-1,jsparam=None) :
         C.executeCommand(self.token, CO.toS(co), row, col, jsparam)
@@ -502,10 +523,13 @@ class TestGame :
         P.readBoard()
         while True :
             if endOfGame(P) : return False 
-            if getBattle(P) : 
-                playTwoBattle(P, PO)
+            if getSuspend(P) :
+                playSuspend(P)
             else:
-                if not P.playCommand() : return True 
+                if getBattle(P) :
+                    playTwoBattle(P, PO)
+                else:
+                    if not P.playCommand() : return True 
             P.readBoard()
 
     def playN(self, P,no):

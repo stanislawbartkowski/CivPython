@@ -12,6 +12,7 @@ import logging
 
 def startTest() :
     C.registerAutom()
+    C.clearWaitingList()
     logging.basicConfig(level=logging.INFO)
 
 

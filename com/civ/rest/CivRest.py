@@ -6,11 +6,11 @@ Created on 31 sty 2019
 import requests
 import json
 
-#SERVERHOST="localhost"
-#APPNAME="CIvilizationUI"
+SERVERHOST="localhost"
+APPNAME="CIvilizationUI"
 
-SERVERHOST = "think"
-APPNAME = "civilization"
+#SERVERHOST = "think"
+#APPNAME = "civilization"
 
 
 class CivError(Exception): 
@@ -131,3 +131,8 @@ def __postJson(rest, js, civ):
 def postsingleGame(js, civ):
     return __postJson("deploygame", js, civ)    
 
+def clearWaitingList():
+    url = __getRestURL() + "/clearwaitinglist"
+    r = requests.post(url)
+    # code 204, no contents, expected here
+    __getText(r)
