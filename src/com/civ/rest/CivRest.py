@@ -7,7 +7,9 @@ import requests
 import json
 
 SERVERHOST="localhost"
-APPNAME="CIvilizationUI"
+# APPNAME="/CIvilizationUI"
+APPNAME=""
+PORT="8000"
 
 #SERVERHOST = "think"
 #APPNAME = "civilization"
@@ -26,7 +28,7 @@ class CivError(Exception):
 
 
 def __getRestURL():
-    return "http://" + SERVERHOST + ":8080/" + APPNAME + "/rest"
+    return "http://" + SERVERHOST + ":" + PORT + APPNAME + "/rest"
 
 
 def __getText(r):

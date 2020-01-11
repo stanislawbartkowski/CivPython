@@ -4,6 +4,13 @@ Created on 31 sty 2019
 @author: civ
 '''
 
+import sys
+from com.civ.play import misc
+
+
+print(sys.path)
+
+
 from com.civ.rest import CivRest as C
 import random
 
@@ -13,19 +20,14 @@ def registerNewGame():
 
 
 def joinGame():
-    gameid = C.getGameid()
-    games = C.getWaitingGames()
-    civwaiting = C.findGame(games, gameid)
-    token = C.joinGame(gameid, civwaiting)
+    (token,_) = misc.joinGame()
     return token
-
 
 def chooseCommand(b):
     commands = b['board']['you']['commands']
     if len(commands) == 0 : return None
     i = random.randrange(0, len(commands))
     return commands[i]['command']
-
 
 if __name__ == '__main__':
     random.seed()
