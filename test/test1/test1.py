@@ -5,6 +5,9 @@ Created on 3 lut 2019
 '''
 import unittest
 
+import sys
+print(sys.path)
+
 from com.civ.rest import CivRest as C
 from com.civ.play.Play import TestGame
 
@@ -25,18 +28,16 @@ class Test(unittest.TestCase):
         G.playN(P,5)
         G.deleteGame()
 
-#    @unittest.skip("demonstrating skipping")        
+    # @unittest.skip("demonstrating skipping")        
     def test2(self):
         print("Simple test for two player game")
         G = TestGame()
         G.registerTwoGames("China,Rome")
-        PA = G.playA()
-        G.play(PA)
-        PB = G.playB()
-        G.play(PB)
+        G.playA()
+        G.playB()
         G.deleteGame()
         
-#    @unittest.skip("demonstrating skipping")        
+    # @unittest.skip("demonstrating skipping")        
     def test3(self):
         print("Deploy game and delete game")
         G = TestHelper.DeployTestGame("test1", "game-1.json", "America")
