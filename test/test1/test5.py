@@ -19,7 +19,7 @@ class Test(unittest.TestCase):
     def setUp(self):
         C.registerAutom()
 
-    @unittest.skip("demonstrating skipping")
+    #@unittest.skip("demonstrating skipping")
     def test1(self):
         print("Test SPENDTRADE")
         G = TestHelper.DeployTestGame("test1", "game-51.json", "America")
@@ -43,7 +43,7 @@ class Test(unittest.TestCase):
         self.assertEqual(t,1)
         G.deleteGame()
 
-    @unittest.skip("demonstrating skipping")
+    #@unittest.skip("demonstrating skipping")
     def test2(self):
         print("Test ADVANCECULTURE and DROPCARD")
         G = TestHelper.DeployTestGame("test1", "game-52.json", "America")
@@ -63,7 +63,7 @@ class Test(unittest.TestCase):
         self.assertEqual(len(cards),2)
         G.deleteGame()
 
-    @unittest.skip("demonstrating skipping")
+    #@unittest.skip("demonstrating skipping")
     def test3(self):
         print("Test BUYWONDER")
         G = TestHelper.DeployTestGame("test1", "game-53.json", "America")
@@ -78,7 +78,7 @@ class Test(unittest.TestCase):
         self.assertEqual(s["wonder"], "TheColossus")
         G.deleteGame()
         
-    @unittest.skip("demonstrating skipping")
+    #@unittest.skip("demonstrating skipping")
     def test4(self):
         print("Test BUYWONDER")
         G = TestHelper.DeployTestGame("test1", "game-54.json", "America")
@@ -93,7 +93,7 @@ class Test(unittest.TestCase):
         self.assertEqual(s["greatpersontype"], "Scientist")
         G.deleteGame()
         
-    @unittest.skip("demonstrating skipping")
+    #@unittest.skip("demonstrating skipping")
     def test6(self):
         print("Advance Culture and put great person on board now")
         G = TestHelper.DeployTestGame("test1", "game-55.json", "America")
@@ -108,7 +108,7 @@ class Test(unittest.TestCase):
         self.assertEqual(s["greatpersontype"], "Scientist")
         G.deleteGame()
         
-    @unittest.skip("demonstrating skipping")        
+    #@unittest.skip("demonstrating skipping")        
     def test7(self):
         print("Advance Culture and keep great person on hold")
         G = TestHelper.DeployTestGame("test1", "game-55.json", "America")
@@ -120,7 +120,7 @@ class Test(unittest.TestCase):
         self.assertIn("LouisPasteur", g) 
         G.deleteGame()
 
-    @unittest.skip("demonstrating skipping")
+    #@unittest.skip("demonstrating skipping")
     def test8(self):
         print("Use technology spending Hut Incense")
         G = TestHelper.DeployTestGame("test1", "game-58.json", "America")

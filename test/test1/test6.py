@@ -19,7 +19,7 @@ class Test6(unittest.TestCase):
     def setUp(self):
         TestHelper.startTest()
 
-    @unittest.skip("demonstrating skipping")
+#    @unittest.skip("demonstrating skipping")
     def test1(self):
         print("Test SPENDTRADE")
         G = TestHelper.DeployTestGame("test1", "game-61.json", "America")
@@ -45,7 +45,7 @@ class Test6(unittest.TestCase):
         
         G.deleteGame()
 
-    @unittest.skip("demonstrating skipping")
+#    @unittest.skip("demonstrating skipping")
     def test2(self):
         print("Test ATTACK")
         G = TestHelper.DeployTestGame("test1", "game-62.json", "America")
@@ -63,7 +63,7 @@ class Test6(unittest.TestCase):
 
         G.deleteGame()
 
-    @unittest.skip("demonstrating skipping")
+#    @unittest.skip("demonstrating skipping")
     def test3(self):
         print("Test ATTACK and BATTLE")
         G = TestHelper.DeployTestGame("test1", "game-62.json", "America")
@@ -97,7 +97,7 @@ class Test6(unittest.TestCase):
         
         G.deleteGame()
 
-    @unittest.skip("demonstrating skipping")
+#    @unittest.skip("demonstrating skipping")
     def test4(self):
         print("Take loot after battle")
         G = TestHelper.DeployTestGame("test1", "game-64.json", "America,China")
@@ -122,7 +122,7 @@ class Test6(unittest.TestCase):
         
         G.deleteGame()
         
-    @unittest.skip("demonstrating skipping")        
+#    @unittest.skip("demonstrating skipping")        
     def test5(self):
         print("End of game")
         G = TestHelper.DeployTestGame("test1", "game-65.json", "America")
@@ -176,11 +176,11 @@ class Test6(unittest.TestCase):
                 
         G.deleteGame()
         
-    @unittest.skip("demonstrating skipping")
+#    @unittest.skip("demonstrating skipping")
     def test6(self):
         self._testsuspend(CO.Command.WRITINGACTION, 11)
 
-    @unittest.skip("demonstrating skipping")
+#    @unittest.skip("demonstrating skipping")
     def test7(self):
         self._testsuspend(CO.Command.LETSUSPENDEDGO, 12)
             
@@ -194,7 +194,7 @@ class Test6(unittest.TestCase):
         
         G.deleteGame()
 
-    @unittest.skip("demonstrating skipping")
+#    @unittest.skip("demonstrating skipping")
     def test9(self):
         print("Suspended action")
         G = TestHelper.DeployTestGame("test1", "game-69.json", "China,Rome")
