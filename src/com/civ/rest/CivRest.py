@@ -7,6 +7,7 @@ import requests
 import json
 
 SERVERHOST="localhost"
+#SERVERHOST="thinkde"
 # APPNAME="/CIvilizationUI"
 APPNAME=""
 PORT="8000"
@@ -14,6 +15,7 @@ PORT="8000"
 #SERVERHOST = "think"
 #APPNAME = "civilization"
 
+TOKEN="Token"
 
 class CivError(Exception): 
   
@@ -37,16 +39,18 @@ def __getText(r):
     return r.text
 
 
-def __getRest(url):
-    r = requests.get(url)
+def __getTokenHeader(token) :
+    return { "Authorization" : TOKEN + " " + token }
+
+def __getRest(url,token = None):
+    if token == None : r = requests.get(url)
+    else : r = requests.get(url, headers=__getTokenHeader(token))
     return __getText(r)
 
-
-def __getRestCivData(what, param=None):
+def __getRestCivData(what, param=None, token=None):
     if param == None : url = __getRestURL() + "/civdata?what=" + str(what)
     else : url = __getRestURL() + "/civdata?what=" + str(what) + "&param=" + param
-    return __getRest(url)
-    
+    return __getRest(url,token)    
     
 def twoPlayersGame(civs):
     return __getRestCivData(6, civs)
@@ -96,16 +100,15 @@ def joinGame(gameid, civ):
 
 
 def getBoard(token):
-    te = __getRestCivData(2, token)
+    te = __getRestCivData(2, token=token)
     # can be empty if nothing has changed since previous getBoard
     if te == "" : return None
     return json.loads(te)
 
 
 def itemizeCommand(token, command):
-    url = __getRestURL() + "/itemize?token=" + token + "&command=" + command
-    return json.loads(__getRest(url))
-
+    url = __getRestURL() + "/itemize?command=" + command
+    return json.loads(__getRest(url,token=token))
 
 def deleteGame(gameid):
     url = __getRestURL() + "/delete?gameid=" + gameid
@@ -114,13 +117,13 @@ def deleteGame(gameid):
 
     
 def unregisterG(token):
-    __getRestCivData(4, token)        
+    __getRestCivData(4, token=token)        
 
     
 def executeCommand(token, action, row, col, jsparam=None):
-    url = __getRestURL() + "/command?token=" + token + "&action=" + action + "&row=" + str(row) + "&col=" + str(col)
+    url = __getRestURL() + "/command?action=" + action + "&row=" + str(row) + "&col=" + str(col)
     if jsparam != None: url = url + "&jsparam=" + jsparam
-    r = requests.post(url)
+    r = requests.post(url,headers=__getTokenHeader(token))
     res = __getText(r)
     if res != None and res != "" : raise(CivError(action, res))
 
