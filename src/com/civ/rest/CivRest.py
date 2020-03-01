@@ -141,3 +141,8 @@ def clearWaitingList():
     r = requests.post(url)
     # code 204, no contents, expected here
     __getText(r)
+
+def resumeGame(gameid, civ):
+    url = __getRestURL() + "/resumegame?gameid=" + gameid + "&civ=" + civ
+    r = requests.get(url)
+    return __getText(r)

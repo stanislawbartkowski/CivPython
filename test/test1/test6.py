@@ -184,7 +184,7 @@ class Test6(unittest.TestCase):
     def test7(self):
         self._testsuspend(CO.Command.LETSUSPENDEDGO, 12)
             
-#    @unittest.skip("demonstrating skipping")
+    @unittest.skip("demonstrating skipping")
     def test8(self):
         print("Play whole game to the end")
         G = TestGame()

@@ -496,6 +496,7 @@ class TestGame :
         a = C.postsingleGame(board, civ).split(',')
         self.tokena = a[0]
         self.gameid = a[1]
+        self.tokenb = None
 
     def deployTwoGame(self, board, civ):
         a = C.postsingleGame(board, civ).split(',')
@@ -537,11 +538,20 @@ class TestGame :
         for i in range(no) :                
             if not P.playCommand(): break 
             P.readBoard()
-        
-    def deleteGame(self):
+
+    def unregisterToken(self) :
         if self.tokena : C.unregisterG(self.tokena)
         if self.tokenb : C.unregisterG(self.tokenb)
+
+    def deleteGame(self):
+        self.unregisterToken()
         C.deleteGame(self.gameid)
+
+    def resumeGame(self,gameid,civ):
+        a = C.resumeGame(gameid,civ).split(',')
+        self.tokena = a[0]
+        self.gameid = a[1]
+        self.tokenb = None
         
     def playGameToEnd(self):
         PA = self.playA()

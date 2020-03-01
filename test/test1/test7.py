@@ -39,6 +39,20 @@ class Test7(unittest.TestCase):
         
         G.deleteGame()
 
+    def test2(self):
+        print("Initialize game and resume")
+        G = TestGame()
+        G.registerSingleGame("China")
+        gameid = G.gameid
+        print("gameid=" + gameid)
+        G.resumeGame(gameid,"China")
+        PA = G.playA()
+        PA.readBoard()
+        G.deleteGame()
+
+
+
+
 
         
     
