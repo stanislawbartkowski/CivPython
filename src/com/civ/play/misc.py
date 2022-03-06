@@ -7,6 +7,7 @@ Created on 1 lut 2019
 from com.civ.rest import CivRest as C
 import random
 import json
+from typing import List,Tuple, Callable, Dict
 
 def joinGame():
     gameid = C.getGameid()
@@ -15,34 +16,24 @@ def joinGame():
     token = C.joinGame(gameid, civwaiting).split(',')[0]
     return (token, gameid)
 
-def getRandomNo(no):
+def getRandomNo(no : int) -> int:
     return random.randrange(0, no)
 
-def getRandomI(a, selfun=None):
-    if len(a) == 0 : return (None,-1)
+def getRandomI(a : List[any], selfun : Callable=None) -> Tuple[any,int] :
+    if len(a) == 0 : return None,-1
     if selfun == None :
         i = getRandomNo(len(a))
-        return (a[i],i)
-    i = 0
-    for elem in a :        
-        if selfun(elem) : return (elem,i)
-        i = i + 1
-    return (None,-1)    
+        return a[i],i
+    for i in range(len(a)) :
+        if selfun(a[i]) : return a[i],i
+    return None,-1
 
-
-def getRandom(a, selfun=None):
+def getRandom(a : List[any], selfun : Callable =None) -> Tuple[any,int] :
     (re,_) = getRandomI(a, selfun)
     return re
 
-
-def pToJ(row, col):
-    m = {"row" : row, "col" : col}
-    return json.dumps(m)
-
-
-def eqP(p1, p2):
+def eqP(p1 : Dict, p2 : Dict) -> bool :
     return (p1["row"] == p2["row"]) and (p1["col"] == p2["col"])
-
 
 class MapCR : 
     

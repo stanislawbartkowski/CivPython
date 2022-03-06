@@ -9,6 +9,7 @@ from com.civ.rest import CivRest as C
 from com.civ.play.Play import TestGame
 from com.civ.commands import Commands as CO
 from com.civ.play import misc
+from com.civ.play.Types import *
 
 from helper import TestHelper
 
@@ -21,13 +22,15 @@ class Test(unittest.TestCase):
     def _run(self):
         G = TestHelper.DeployTestGame("test1", "game-32.json", "America")
         PA = G.playA()
-#        PA.playSingleCommand(CO.Command.STARTMOVE, lambda x : (x['p']['row'] == 2 and x['p']['col'] == 2))
         PA.readBoard()
-        PA.playSingleCommand(CO.Command.STARTMOVE, lambda x : misc.eqP({"row" : 2, "col" : 2}, x['p']))
+        p : Point = Point.initp(2,2)
+        PA.playSingleCommand(CO.Command.STARTMOVE, lambda x : p == x['p'])
         PA.readBoard()
-        PA.playSingleCommand(CO.Command.MOVE, lambda x : misc.eqP({"row" : 2, "col" : 1}, x))
+        p : Point = Point.initp(2,1)
+        PA.playSingleCommand(CO.Command.MOVE, lambda x : p == x)
         PA.readBoard()
-        PA.playSingleCommand(CO.Command.MOVE, lambda x : misc.eqP({"row" : 1, "col" : 1}, x))
+        p : Point = Point.initp(1,1)
+        PA.playSingleCommand(CO.Command.MOVE, lambda x : p ==  x)
         PA.readBoard()
         return (G, PA)
     
@@ -100,6 +103,7 @@ class Test(unittest.TestCase):
         comm = PA.getCommands()
         print(comm)
         self.assertTrue(CO.Command.EXPLOREHUT in comm)
-        PA.playSingleCommand(CO.Command.EXPLOREHUT)        
+        p : Point = Point.initp(0,4)
+        PA.playSingleCommand(CO.Command.EXPLOREHUT,lambda x : p ==  x)
         G.deleteGame()
 

@@ -4,11 +4,13 @@ Created on 1 lut 2019
 @author: civ
 '''
 
+from typing import List, Callable
 from com.civ.rest import CivRest as C
 from com.civ.commands import Commands as CO
 from com.civ.commands import Resources as RE
 import random
 from com.civ.play import misc
+from com.civ.play.Types import *
 import json
 import logging
 
@@ -111,10 +113,11 @@ def getBattle(P):
 # supporting methods
 # -------------------------
 
-def onList(p, l):
-    for i in l :
-        if misc.eqP(i, p) : return True
-    return False    
+def onList(p : Point, l : List[Point]) -> bool:
+##    for i in l :
+##        if misc.eqP(i, p) : return True
+##    return False    
+    return p in l
 
 # ----------------------
 # commands
@@ -146,40 +149,42 @@ def _buyUnit(P):
     c = city["p"]
     P.executeCommandP(c)
 
+# Figures movement
     
-def _startMove(P, selfun):
+def _startMove(P, selfun) -> None:
     P.visited = None
-    f = misc.getRandom(P.i, selfun)
-    P.executeCommandPP(f['p'], f['f'])
-
+    fig = misc.getRandom(P.i, selfun)
+    
+    f : Figures
+    p : Point
+    p, f = Point(fig['p']),Figures(fig['f'])
+    
+    P.executeTCommandPP(p, f)
 
 def _endOfMove(P):
     P.co = CO.Command.ENDOFMOVE
     P.executeCommand()    
 
     
-def _move(P, selfun):
+def _move(P, selfun : Callable):
     if P.visited == None : P.visited = []
     
-    moved = []
+    moved : List[Point] = []
     key = 'moves'
     if P.co == CO.Command.EXPLOREHUT : key = "explore"
     list = P.i[key]
-    if len(list) == 1 : 
-        moved.append(list[0])
-    else:
-        for i in list :
-            if not onList(i, P.visited) : 
-                moved.append(i)
+
+    moved = [ Point(i) for i in list if not i in P.visited ] 
     
     if len(moved) == 0 :
         _endOfMove(P)
         return
     
-    m = misc.getRandom(moved, selfun)
+    m : Point = misc.getRandom(moved, selfun)
     P.visited.append(m)
-    P.executeCommandP(m)
+    P.executeTCommandP(m)
 
+# ===================
     
 def _revealTile(P) :
     l = P.i["tiles"]
@@ -351,6 +356,12 @@ def _winnerLoot(P):
  
 class Play:
 
+    # player token
+    token: str
+    bchanged: bool
+    
+    visited : List[Point]
+        
     def __init__(self, token):
         self.token = token
         self.visited = None
@@ -373,6 +384,19 @@ class Play:
         
     def executeCommandPP(self, p, pp):
         self.executeCommandP(p, json.dumps(pp))
+        
+        
+    # --- typing ----
+    def executeTCommandP(self, p : Point, jsparam : str=None):
+        self.executeCommand(p.row, p.col, jsparam)
+    
+    def executeTCommandPP(self, p : Point, pp : CivO):
+        self.executeTCommandP(p, pp.dumpj())
+        
+    def executeCommandTJ(self, pp : CivO):
+        self.executeCommand(-1, -1, pp.dumpj())        
+
+    
         
     def boardChanged(self):
         return self.bchanged
